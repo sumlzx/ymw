@@ -1,0 +1,111 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="cn.boot.ymw.cn.dao.ProductHistoryDao">
+
+    <resultMap type="cn.boot.ymw.cn.pojo.ProductHistory" id="ProductHistoryMap">
+        <result property="hid" column="hid" jdbcType="INTEGER"/>
+        <result property="uid" column="uid" jdbcType="INTEGER"/>
+        <result property="pid" column="pid" jdbcType="INTEGER"/>
+        <result property="hDate" column="h_date" jdbcType="TIMESTAMP"/>
+    </resultMap>
+
+    <!--查询单个-->
+    <select id="queryById" resultMap="ProductHistoryMap">
+        select
+          hid, uid, pid, h_date
+        from product_history
+        where hid = #{hid}
+    </select>
+
+    <!--查询指定行数据-->
+    <select id="queryAllByLimit" resultMap="ProductHistoryMap">
+        select
+          hid, uid, pid, h_date
+        from product_history
+        <where>
+            <if test="hid != null">
+                and hid = #{hid}
+            </if>
+            <if test="uid != null">
+                and uid = #{uid}
+            </if>
+            <if test="pid != null">
+                and pid = #{pid}
+            </if>
+            <if test="hDate != null">
+                and h_date = #{hDate}
+            </if>
+        </where>
+        limit #{pageable.offset}, #{pageable.pageSize}
+    </select>
+
+    <!--统计总行数-->
+    <select id="count" resultType="java.lang.Long">
+        select count(1)
+        from product_history
+        <where>
+            <if test="hid != null">
+                and hid = #{hid}
+            </if>
+            <if test="uid != null">
+                and uid = #{uid}
+            </if>
+            <if test="pid != null">
+                and pid = #{pid}
+            </if>
+            <if test="hDate != null">
+                and h_date = #{hDate}
+            </if>
+        </where>
+    </select>
+
+    <!--新增所有列-->
+    <insert id="insert" keyProperty="hid" useGeneratedKeys="true">
+        insert into product_history(uid, pid, h_date)
+        values (#{uid}, #{pid}, #{hDate})
+    </insert>
+
+    <insert id="insertBatch" keyProperty="hid" useGeneratedKeys="true">
+        insert into product_history(uid, pid, h_date)
+        values
+        <foreach collection="entities" item="entity" separator=",">
+        (#{entity.uid}, #{entity.pid}, #{entity.hDate})
+        </foreach>
+    </insert>
+
+    <insert id="insertOrUpdateBatch" keyProperty="hid" useGeneratedKeys="true">
+        insert into product_history(uid, pid, h_date)
+        values
+        <foreach collection="entities" item="entity" separator=",">
+            (#{entity.uid}, #{entity.pid}, #{entity.hDate})
+        </foreach>
+        on duplicate key update
+        uid = values(uid),
+        pid = values(pid),
+        h_date = values(h_date)
+    </insert>
+
+    <!--通过主键修改数据-->
+    <update id="update">
+        update product_history
+        <set>
+            <if test="uid != null">
+                uid = #{uid},
+            </if>
+            <if test="pid != null">
+                pid = #{pid},
+            </if>
+            <if test="hDate != null">
+                h_date = #{hDate},
+            </if>
+        </set>
+        where hid = #{hid}
+    </update>
+
+    <!--通过主键删除-->
+    <delete id="deleteById">
+        delete from product_history where hid = #{hid}
+    </delete>
+
+</mapper>
+

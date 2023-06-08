@@ -1,0 +1,177 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="cn.boot.ymw.cn.dao.ProductDao">
+
+    <resultMap type="cn.boot.ymw.cn.pojo.Product" id="ProductMap">
+        <result property="id" column="id" jdbcType="INTEGER"/>
+        <result property="name" column="name" jdbcType="VARCHAR"/>
+        <result property="description" column="description" jdbcType="VARCHAR"/>
+        <result property="price" column="price" jdbcType="NUMERIC"/>
+        <result property="stock" column="stock" jdbcType="INTEGER"/>
+        <result property="categorylevel1id" column="categoryLevel1Id" jdbcType="INTEGER"/>
+        <result property="categorylevel2id" column="categoryLevel2Id" jdbcType="INTEGER"/>
+        <result property="categorylevel3id" column="categoryLevel3Id" jdbcType="INTEGER"/>
+        <result property="filename" column="fileName" jdbcType="VARCHAR"/>
+        <result property="isdelete" column="isDelete" jdbcType="INTEGER"/>
+    </resultMap>
+
+    <!--查询单个-->
+    <select id="queryById" resultMap="ProductMap">
+        select
+          id, name, description, price, stock, categoryLevel1Id, categoryLevel2Id, categoryLevel3Id, fileName, isDelete
+        from product
+        where id = #{id}
+    </select>
+
+    <!--查询指定行数据-->
+    <select id="queryAllByLimit" resultMap="ProductMap">
+        select
+          id, name, description, price, stock, categoryLevel1Id, categoryLevel2Id, categoryLevel3Id, fileName, isDelete
+        from product
+        <where>
+            <if test="id != null">
+                and id = #{id}
+            </if>
+            <if test="name != null and name != ''">
+                and name = #{name}
+            </if>
+            <if test="description != null and description != ''">
+                and description = #{description}
+            </if>
+            <if test="price != null">
+                and price = #{price}
+            </if>
+            <if test="stock != null">
+                and stock = #{stock}
+            </if>
+            <if test="categorylevel1id != null">
+                and categoryLevel1Id = #{categorylevel1id}
+            </if>
+            <if test="categorylevel2id != null">
+                and categoryLevel2Id = #{categorylevel2id}
+            </if>
+            <if test="categorylevel3id != null">
+                and categoryLevel3Id = #{categorylevel3id}
+            </if>
+            <if test="filename != null and filename != ''">
+                and fileName = #{filename}
+            </if>
+            <if test="isdelete != null">
+                and isDelete = #{isdelete}
+            </if>
+        </where>
+        limit #{pageable.offset}, #{pageable.pageSize}
+    </select>
+
+    <!--统计总行数-->
+    <select id="count" resultType="java.lang.Long">
+        select count(1)
+        from product
+        <where>
+            <if test="id != null">
+                and id = #{id}
+            </if>
+            <if test="name != null and name != ''">
+                and name = #{name}
+            </if>
+            <if test="description != null and description != ''">
+                and description = #{description}
+            </if>
+            <if test="price != null">
+                and price = #{price}
+            </if>
+            <if test="stock != null">
+                and stock = #{stock}
+            </if>
+            <if test="categorylevel1id != null">
+                and categoryLevel1Id = #{categorylevel1id}
+            </if>
+            <if test="categorylevel2id != null">
+                and categoryLevel2Id = #{categorylevel2id}
+            </if>
+            <if test="categorylevel3id != null">
+                and categoryLevel3Id = #{categorylevel3id}
+            </if>
+            <if test="filename != null and filename != ''">
+                and fileName = #{filename}
+            </if>
+            <if test="isdelete != null">
+                and isDelete = #{isdelete}
+            </if>
+        </where>
+    </select>
+
+    <!--新增所有列-->
+    <insert id="insert" keyProperty="id" useGeneratedKeys="true">
+        insert into product(name, description, price, stock, categoryLevel1Id, categoryLevel2Id, categoryLevel3Id, fileName, isDelete)
+        values (#{name}, #{description}, #{price}, #{stock}, #{categorylevel1id}, #{categorylevel2id}, #{categorylevel3id}, #{filename}, #{isdelete})
+    </insert>
+
+    <insert id="insertBatch" keyProperty="id" useGeneratedKeys="true">
+        insert into product(name, description, price, stock, categoryLevel1Id, categoryLevel2Id, categoryLevel3Id, fileName, isDelete)
+        values
+        <foreach collection="entities" item="entity" separator=",">
+        (#{entity.name}, #{entity.description}, #{entity.price}, #{entity.stock}, #{entity.categorylevel1id}, #{entity.categorylevel2id}, #{entity.categorylevel3id}, #{entity.filename}, #{entity.isdelete})
+        </foreach>
+    </insert>
+
+    <insert id="insertOrUpdateBatch" keyProperty="id" useGeneratedKeys="true">
+        insert into product(name, description, price, stock, categoryLevel1Id, categoryLevel2Id, categoryLevel3Id, fileName, isDelete)
+        values
+        <foreach collection="entities" item="entity" separator=",">
+            (#{entity.name}, #{entity.description}, #{entity.price}, #{entity.stock}, #{entity.categorylevel1id}, #{entity.categorylevel2id}, #{entity.categorylevel3id}, #{entity.filename}, #{entity.isdelete})
+        </foreach>
+        on duplicate key update
+        name = values(name),
+        description = values(description),
+        price = values(price),
+        stock = values(stock),
+        categoryLevel1Id = values(categoryLevel1Id),
+        categoryLevel2Id = values(categoryLevel2Id),
+        categoryLevel3Id = values(categoryLevel3Id),
+        fileName = values(fileName),
+        isDelete = values(isDelete)
+    </insert>
+
+    <!--通过主键修改数据-->
+    <update id="update">
+        update product
+        <set>
+            <if test="name != null and name != ''">
+                name = #{name},
+            </if>
+            <if test="description != null and description != ''">
+                description = #{description},
+            </if>
+            <if test="price != null">
+                price = #{price},
+            </if>
+            <if test="stock != null">
+                stock = #{stock},
+            </if>
+            <if test="categorylevel1id != null">
+                categoryLevel1Id = #{categorylevel1id},
+            </if>
+            <if test="categorylevel2id != null">
+                categoryLevel2Id = #{categorylevel2id},
+            </if>
+            <if test="categorylevel3id != null">
+                categoryLevel3Id = #{categorylevel3id},
+            </if>
+            <if test="filename != null and filename != ''">
+                fileName = #{filename},
+            </if>
+            <if test="isdelete != null">
+                isDelete = #{isdelete},
+            </if>
+        </set>
+        where id = #{id}
+    </update>
+
+    <!--通过主键删除-->
+    <delete id="deleteById">
+        delete from product where id = #{id}
+    </delete>
+
+</mapper>
+

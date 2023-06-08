@@ -1,0 +1,144 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="cn.boot.ymw.cn.dao.OrderDao">
+
+    <resultMap type="cn.boot.ymw.cn.pojo.Order" id="OrderMap">
+        <result property="id" column="id" jdbcType="INTEGER"/>
+        <result property="userid" column="userId" jdbcType="INTEGER"/>
+        <result property="loginname" column="loginName" jdbcType="VARCHAR"/>
+        <result property="useraddress" column="userAddress" jdbcType="VARCHAR"/>
+        <result property="createtime" column="createTime" jdbcType="TIMESTAMP"/>
+        <result property="cost" column="cost" jdbcType="NUMERIC"/>
+        <result property="serialnumber" column="serialNumber" jdbcType="VARCHAR"/>
+    </resultMap>
+
+    <!--查询单个-->
+    <select id="queryById" resultMap="OrderMap">
+        select
+          id, userId, loginName, userAddress, createTime, cost, serialNumber
+        from order
+        where id = #{id}
+    </select>
+
+    <!--查询指定行数据-->
+    <select id="queryAllByLimit" resultMap="OrderMap">
+        select
+          id, userId, loginName, userAddress, createTime, cost, serialNumber
+        from order
+        <where>
+            <if test="id != null">
+                and id = #{id}
+            </if>
+            <if test="userid != null">
+                and userId = #{userid}
+            </if>
+            <if test="loginname != null and loginname != ''">
+                and loginName = #{loginname}
+            </if>
+            <if test="useraddress != null and useraddress != ''">
+                and userAddress = #{useraddress}
+            </if>
+            <if test="createtime != null">
+                and createTime = #{createtime}
+            </if>
+            <if test="cost != null">
+                and cost = #{cost}
+            </if>
+            <if test="serialnumber != null and serialnumber != ''">
+                and serialNumber = #{serialnumber}
+            </if>
+        </where>
+        limit #{pageable.offset}, #{pageable.pageSize}
+    </select>
+
+    <!--统计总行数-->
+    <select id="count" resultType="java.lang.Long">
+        select count(1)
+        from order
+        <where>
+            <if test="id != null">
+                and id = #{id}
+            </if>
+            <if test="userid != null">
+                and userId = #{userid}
+            </if>
+            <if test="loginname != null and loginname != ''">
+                and loginName = #{loginname}
+            </if>
+            <if test="useraddress != null and useraddress != ''">
+                and userAddress = #{useraddress}
+            </if>
+            <if test="createtime != null">
+                and createTime = #{createtime}
+            </if>
+            <if test="cost != null">
+                and cost = #{cost}
+            </if>
+            <if test="serialnumber != null and serialnumber != ''">
+                and serialNumber = #{serialnumber}
+            </if>
+        </where>
+    </select>
+
+    <!--新增所有列-->
+    <insert id="insert" keyProperty="id" useGeneratedKeys="true">
+        insert into order(userId, loginName, userAddress, createTime, cost, serialNumber)
+        values (#{userid}, #{loginname}, #{useraddress}, #{createtime}, #{cost}, #{serialnumber})
+    </insert>
+
+    <insert id="insertBatch" keyProperty="id" useGeneratedKeys="true">
+        insert into order(userId, loginName, userAddress, createTime, cost, serialNumber)
+        values
+        <foreach collection="entities" item="entity" separator=",">
+        (#{entity.userid}, #{entity.loginname}, #{entity.useraddress}, #{entity.createtime}, #{entity.cost}, #{entity.serialnumber})
+        </foreach>
+    </insert>
+
+    <insert id="insertOrUpdateBatch" keyProperty="id" useGeneratedKeys="true">
+        insert into order(userId, loginName, userAddress, createTime, cost, serialNumber)
+        values
+        <foreach collection="entities" item="entity" separator=",">
+            (#{entity.userid}, #{entity.loginname}, #{entity.useraddress}, #{entity.createtime}, #{entity.cost}, #{entity.serialnumber})
+        </foreach>
+        on duplicate key update
+        userId = values(userId),
+        loginName = values(loginName),
+        userAddress = values(userAddress),
+        createTime = values(createTime),
+        cost = values(cost),
+        serialNumber = values(serialNumber)
+    </insert>
+
+    <!--通过主键修改数据-->
+    <update id="update">
+        update order
+        <set>
+            <if test="userid != null">
+                userId = #{userid},
+            </if>
+            <if test="loginname != null and loginname != ''">
+                loginName = #{loginname},
+            </if>
+            <if test="useraddress != null and useraddress != ''">
+                userAddress = #{useraddress},
+            </if>
+            <if test="createtime != null">
+                createTime = #{createtime},
+            </if>
+            <if test="cost != null">
+                cost = #{cost},
+            </if>
+            <if test="serialnumber != null and serialnumber != ''">
+                serialNumber = #{serialnumber},
+            </if>
+        </set>
+        where id = #{id}
+    </update>
+
+    <!--通过主键删除-->
+    <delete id="deleteById">
+        delete from order where id = #{id}
+    </delete>
+
+</mapper>
+
